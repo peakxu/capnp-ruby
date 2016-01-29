@@ -122,7 +122,8 @@ module CapnProto
       end
 
       def read_packed_from(io)
-        raise 'not implemented'
+        reader = PackedFdMessageReader.new(io)
+        reader.get_root(self)
       end
     end
   end
