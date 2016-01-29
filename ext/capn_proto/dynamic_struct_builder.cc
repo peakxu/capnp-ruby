@@ -18,6 +18,7 @@ namespace ruby_capn_proto {
       defineAlloc(&alloc).
       defineMethod("which", &which).
       defineMethod("write", &write).
+      defineMethod("write_packed", &write_packed).
       defineMethod("to_bytes", &to_bytes).
       defineMethod("[]", &get).
       defineMethod("[]=", &set).
@@ -142,6 +143,22 @@ namespace ruby_capn_proto {
     capnp::MessageBuilder* message_builder = MallocMessageBuilder::unwrap(rb_iv_get(self, "parent"));
     try {
       capnp::writeMessageToFd(fileno, message_builder->getSegmentsForOutput());
+      return Qnil;
+    } catch (kj::Exception ex) {
+      return Exception::raise(ex);
+    }
+  }
+
+  VALUE DynamicStructBuilder::write_packed(VALUE self, VALUE file) {
+    VALUE rb_fileno = rb_funcall(file, rb_intern("fileno"), 0);
+    int fileno = FIX2INT(rb_fileno);
+    if (!RTEST(rb_iv_get(self, "is_root"))) {
+      rb_raise(Exception::Class, "You can only call write_packed() on the message's root struct.");
+    }
+
+    capnp::MessageBuilder* message_builder = MallocMessageBuilder::unwrap(rb_iv_get(self, "parent"));
+    try {
+      capnp::writePackedMessageToFd(fileno, message_builder->getSegmentsForOutput());
       return Qnil;
     } catch (kj::Exception ex) {
       return Exception::raise(ex);
