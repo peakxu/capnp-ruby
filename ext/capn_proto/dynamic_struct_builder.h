@@ -22,6 +22,7 @@ namespace ruby_capn_proto {
     static VALUE write(VALUE self, VALUE file);
     static VALUE write_packed(VALUE self, VALUE file);
     static VALUE to_bytes(VALUE self);
+    static VALUE to_packed_bytes(VALUE self);
 
     static VALUE Class;
   private:

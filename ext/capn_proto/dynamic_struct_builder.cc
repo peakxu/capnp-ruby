@@ -8,6 +8,9 @@
 #include "class_builder.h"
 #include "exception.h"
 #include "util.h"
+#include <kj/std/iostream.h>
+#include <iostream>
+#include <sstream>
 
 namespace ruby_capn_proto {
   using WrappedType = capnp::DynamicStruct::Builder;
@@ -20,6 +23,7 @@ namespace ruby_capn_proto {
       defineMethod("write", &write).
       defineMethod("write_packed", &write_packed).
       defineMethod("to_bytes", &to_bytes).
+      defineMethod("to_packed_bytes", &to_packed_bytes).
       defineMethod("[]", &get).
       defineMethod("[]=", &set).
       defineMethod("init", (VALUE (*)(int, VALUE*, VALUE))&init).
@@ -173,6 +177,17 @@ namespace ruby_capn_proto {
     capnp::MessageBuilder* message_builder = MallocMessageBuilder::unwrap(rb_iv_get(self, "parent"));
     auto array = capnp::messageToFlatArray(*message_builder);
     return rb_str_new((char*)array.begin(), sizeof(capnp::word) * array.size());
+  }
+
+  VALUE DynamicStructBuilder::to_packed_bytes(VALUE self) {
+    if (!RTEST(rb_iv_get(self, "is_root"))) {
+      rb_raise(Exception::Class, "You can only call to_packed_bytes() on the message's root struct.");
+    }
+    capnp::MessageBuilder* message_builder = MallocMessageBuilder::unwrap(rb_iv_get(self, "parent"));
+    std::stringstream buffer;
+    auto output = kj::std::StdOutputStream(buffer);
+    capnp::writePackedMessage(output, message_builder->getSegmentsForOutput());
+    return rb_str_new_cstr(buffer.str().c_str());;
   }
 
   VALUE DynamicStructBuilder::which(VALUE self) {
