@@ -13,6 +13,7 @@
 #include "message_reader.h"
 #include "message_builder.h"
 #include "stream_fd_message_reader.h"
+#include "packed_fd_message_reader.h"
 #include "malloc_message_builder.h"
 #include "flat_array_message_reader.h"
 
@@ -40,6 +41,7 @@ extern "C" {
     MessageReader::Init();
     MessageBuilder::Init();
     StreamFdMessageReader::Init();
+    PackedFdMessageReader::Init();
     MallocMessageBuilder::Init();
     FlatArrayMessageReader::Init();
 
