@@ -116,6 +116,11 @@ module CapnProto
         reader.get_root(self)
       end
 
+      def make_from_packed_bytes(bytes)
+        reader = PackedMessageReader.new(bytes)
+        reader.get_root(self)
+      end
+
       def new_message
         builder = MallocMessageBuilder.new
         builder.init_root(self)
