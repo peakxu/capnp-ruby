@@ -16,6 +16,7 @@
 #include "packed_fd_message_reader.h"
 #include "malloc_message_builder.h"
 #include "flat_array_message_reader.h"
+#include "packed_message_reader.h"
 
 #include "dynamic_struct_reader.h"
 #include "dynamic_struct_builder.h"
@@ -44,6 +45,7 @@ extern "C" {
     PackedFdMessageReader::Init();
     MallocMessageBuilder::Init();
     FlatArrayMessageReader::Init();
+    PackedMessageReader::Init();
 
     DynamicStructReader::Init();
     DynamicStructBuilder::Init();
